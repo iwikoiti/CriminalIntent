@@ -1,6 +1,7 @@
 package com.example.criminalintent
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Date
 
 private const val TAG = "CrimeListFragment"
 class CrimeListFragment: Fragment() {
@@ -61,7 +63,11 @@ class CrimeListFragment: Fragment() {
         fun bind(crime: Crime){
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = this.crime.date.toString()
+
+            val formattedDate = formatDate(this.crime.date) //меняем формат даты
+            //dateTextView.text = this.crime.date.toString()
+            dateTextView.text = formattedDate
+
             solvedImageView.visibility =
                 if (crime.isSolved){
                     View.VISIBLE
@@ -83,12 +89,18 @@ class CrimeListFragment: Fragment() {
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             val crime = crimes[position]
-           holder.bind(crime)
+            holder.bind(crime)
         }
 
         override fun getItemCount() = crimes.size
     }
 
+    // Функция форматирования даты
+    private fun formatDate(date: Date): String {
+        val formatString = "EEEE, MMM dd, yyyy HH:mm"
+        val formattedDate = DateFormat.format(formatString, date)
+        return formattedDate.toString()
+    }
 
 
     companion object {
