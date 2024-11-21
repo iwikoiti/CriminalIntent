@@ -12,23 +12,31 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import java.util.Date
 import java.util.UUID
 
 private const val ARG_CRIME_ID = "crime_id"
 private const val TAG = "CrimeFragment"
 
+@Suppress("DEPRECATION")
 class CrimeFragment: Fragment() {
     private lateinit var crime: Crime
     private lateinit var  titleField: EditText
     private lateinit var dateButton: Button
     private lateinit var solvedCheckBox: CheckBox
+    private val crimeDetailViewModel: CrimeDetailViewModel by lazy {
+        ViewModelProvider(this)[CrimeDetailViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
-        Log.d(TAG, "args bundle crime ID: $crimeId")
+        // загрузка преступления из бд
+        crimeDetailViewModel.loadCrime(crimeId)
+        //Log.d(TAG, "args bundle crime ID: $crimeId")
     }
 
     override fun onCreateView(
@@ -37,9 +45,9 @@ class CrimeFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crime,container,false)
-        titleField = view.findViewById<EditText>(R.id.crime_title)!!
-        dateButton = view.findViewById<Button>(R.id.crime_date)!!
-        solvedCheckBox = view.findViewById<CheckBox>(R.id.crime_solved)!!
+        titleField = view.findViewById(R.id.crime_title)!!
+        dateButton = view.findViewById(R.id.crime_date)!!
+        solvedCheckBox = view.findViewById(R.id.crime_solved)!!
 
         dateButton.apply {
             val formattedDate = formatDate(crime.date) //меняем формат даты в кнопке
@@ -48,6 +56,50 @@ class CrimeFragment: Fragment() {
             isEnabled = false
         }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner)
+//        { crime ->
+//            crime?.let{
+//                this.crime = crime
+//                updateUI()
+//            }
+//        }
+
+        crimeDetailViewModel.crimeLiveData.observe(
+            viewLifecycleOwner,
+            Observer { crime ->
+                crime?.let {
+                    this.crime = crime
+                    Log.d(TAG, "ПРЕСТУПЛЕНИЕ ЗАГРУЖЕНО: $crime")
+                    updateUI()
+                }
+            }
+        )
+
+
+        //вот это норм
+//        crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner) { crime ->
+//            crime?.let { nonNullCrime ->
+//                this.crime = nonNullCrime  // Kotlin smart cast
+//                Log.d(TAG, "ПРЕСТУПЛЕНИЕ ЗАГРУЖЕНО: $nonNullCrime")
+//                updateUI()
+//            }
+//        }
+
+    }
+
+    private fun updateUI(){
+        titleField.setText(crime.title)
+        dateButton.text = crime.date.toString()
+        //solvedCheckBox.isChecked = crime.isSolved
+        solvedCheckBox.apply {
+            isChecked = crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
     }
 
     override fun onStart() {
@@ -70,8 +122,7 @@ class CrimeFragment: Fragment() {
                 before: Int,
                 count: Int
             ) {
-                crime.title =
-                    sequence.toString()
+                crime.title = sequence.toString()
             }
 
             override fun
@@ -87,6 +138,7 @@ class CrimeFragment: Fragment() {
                 crime.isSolved = isChecked}
         }
     }
+
 
     companion object{
         fun newInstance(crimeId: UUID): CrimeFragment{
