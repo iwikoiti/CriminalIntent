@@ -1,5 +1,6 @@
 package com.example.criminalintent
 
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
@@ -15,15 +16,27 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Date
+import java.util.UUID
 
 private const val TAG = "CrimeListFragment"
 
 class CrimeListFragment: Fragment() {
+
+    interface Callbacks{
+        fun onCrimeSelected(crimeId: UUID)
+    }
+    private var callbacks: Callbacks? = null
+
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter:CrimeAdapter? = CrimeAdapter(emptyList())
 
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProvider(this)[CrimeListViewModel::class.java]
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
     }
 
     override fun onCreateView(
@@ -45,11 +58,22 @@ class CrimeListFragment: Fragment() {
             viewLifecycleOwner,
             Observer { crimes ->
                 crimes?.let {
+
+                    //Проверка айдишников
+//                    it.forEach { crime ->
+//                        Log.i(TAG, "Crime ID: ${crime.id}, Title: ${crime.title}, Date: ${crime.date}, Solved: ${crime.isSolved}")
+//                    }
+
                     Log.i(TAG, "Got crimes ${crimes.size}")
                     updateUI(crimes)
                 }
             }
         )
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
     }
 
     private fun updateUI(crimes: List<Crime>){
@@ -85,7 +109,8 @@ class CrimeListFragment: Fragment() {
         }
 
         override fun onClick(v: View) {
-            Toast.makeText(context,"${crime.title} pressed!", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context,"${crime.title} pressed!", Toast.LENGTH_SHORT).show()
+            callbacks?.onCrimeSelected(crime.id)
         }
     }
 

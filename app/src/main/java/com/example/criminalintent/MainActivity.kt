@@ -1,12 +1,17 @@
 package com.example.criminalintent
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.util.UUID
 
-class MainActivity : AppCompatActivity() {
+private const val TAG = "MainActivity"
+
+class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -18,5 +23,9 @@ class MainActivity : AppCompatActivity() {
             val fragment = CrimeListFragment.newInstance()
             supportFragmentManager.beginTransaction().add(R.id.fragment_container,fragment).commit()
         }
+    }
+
+    override fun onCrimeSelected(crimeId: UUID) {
+        Log.d(TAG, "MainActivity.onCrimeSelected: $crimeId")
     }
 }
