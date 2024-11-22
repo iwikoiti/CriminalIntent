@@ -12,6 +12,8 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import java.util.Date
 import java.util.UUID
 
@@ -23,13 +25,19 @@ class CrimeFragment: Fragment() {
     private lateinit var  titleField: EditText
     private lateinit var dateButton: Button
     private lateinit var solvedCheckBox: CheckBox
+    private val crimeDetailViewModel:
+            CrimeDetailViewModel by lazy {
+        ViewModelProvider(this)[CrimeDetailViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
 
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
-        Log.d(TAG, "args bundle crime ID: $crimeId")
+        crimeDetailViewModel.loadCrime(crimeId)
+        //Проверка при выводе в редактирование преступления
+        //Log.d(TAG, "АРГУМЕНТ БАНДЛ: $crimeId")
     }
 
     override fun onCreateView(
@@ -49,6 +57,32 @@ class CrimeFragment: Fragment() {
             isEnabled = false
         }
         return view
+    }
+
+    override fun onViewCreated(view: View,
+                               savedInstanceState: Bundle?) {
+        super.onViewCreated(view,
+            savedInstanceState)
+        crimeDetailViewModel.crimeLiveData.observe(
+            viewLifecycleOwner,
+            Observer { crime ->
+                crime?.let {
+                    this.crime = crime
+                    //Проверка при выводе в редактирование преступления
+                    //Log.d(TAG, "ВВВВВВВВВВВВВВ $crime")
+                    updateUI()
+                }
+            }
+        )
+    }
+
+    private fun updateUI() {
+        titleField.setText(crime.title)
+        dateButton.text = crime.date.toString()
+        solvedCheckBox.apply {
+            isChecked = crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
     }
 
     override fun onStart() {
@@ -71,8 +105,7 @@ class CrimeFragment: Fragment() {
                 before: Int,
                 count: Int
             ) {
-                crime.title =
-                    sequence.toString()
+                crime.title = sequence.toString()
             }
 
             override fun

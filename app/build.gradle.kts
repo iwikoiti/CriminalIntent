@@ -45,7 +45,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.lifecycle.extensions)
+    implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)

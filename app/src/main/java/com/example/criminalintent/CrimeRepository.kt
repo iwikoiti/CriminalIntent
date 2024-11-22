@@ -1,6 +1,7 @@
 package com.example.criminalintent
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.criminalintent.database.CrimeDatabase
@@ -8,6 +9,7 @@ import com.example.criminalintent.database.MIGRATION_1_2
 import java.util.UUID
 
 private const val  DATABASE_NAME = "crime-database"
+private const val TAG = "CrimeRepository"
 class CrimeRepository private constructor(context: Context){
 
     private val database : CrimeDatabase =
@@ -21,6 +23,16 @@ class CrimeRepository private constructor(context: Context){
 
     fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
     fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
+
+    //Проверка при выводе в редактирование преступления
+//    fun getCrime(id: UUID): LiveData<Crime?> {
+//        Log.d(TAG, "ПРЕСТУПЛЕНИЕ ВНУТРИ GET CRIME $id")
+//        return crimeDao.getCrime(id).also {
+//            it.observeForever { crime ->
+//                Log.d(TAG, "Получен объект Crime: $crime")
+//            }
+//        }
+//    }
 
     companion object{
         private var INSTANCE: CrimeRepository? = null
