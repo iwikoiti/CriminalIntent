@@ -14,13 +14,13 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Update
 import java.util.Date
 import java.util.UUID
 
 private const val ARG_CRIME_ID = "crime_id"
 private const val TAG = "CrimeFragment"
 
-@Suppress("DEPRECATION")
 class CrimeFragment: Fragment() {
     private lateinit var crime: Crime
     private lateinit var  titleField: EditText
@@ -34,9 +34,13 @@ class CrimeFragment: Fragment() {
         super.onCreate(savedInstanceState)
         crime = Crime()
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
+//        val crimeIdString = arguments?.getString(ARG_CRIME_ID)
+//        val crimeId: UUID? = crimeIdString?.let { UUID.fromString(it) }
+
         // загрузка преступления из бд
         crimeDetailViewModel.loadCrime(crimeId)
-        //Log.d(TAG, "args bundle crime ID: $crimeId")
+        Log.d(TAG, "ВОТ ЭТО ОН ПОКАЖЕТ ИЛИ НЕТ: $crimeId")
+        //updateUI()
     }
 
     override fun onCreateView(
@@ -61,24 +65,36 @@ class CrimeFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner)
-//        { crime ->
-//            crime?.let{
-//                this.crime = crime
-//                updateUI()
-//            }
-//        }
-
-        crimeDetailViewModel.crimeLiveData.observe(
-            viewLifecycleOwner,
-            Observer { crime ->
-                crime?.let {
-                    this.crime = crime
-                    Log.d(TAG, "ПРЕСТУПЛЕНИЕ ЗАГРУЖЕНО: $crime")
-                    updateUI()
-                }
+        crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner)
+        { crime ->
+            if (crime != null){
+                Log.d(TAG, "ПРЕСТУПЛЕНИЕ ЗАГРУЖЕНО: $crime")
+                Log.d(TAG, "Поля объекта Crime: ID=${crime.id}, Title=${crime.title}, Date=${crime.date}, Solved=${crime.isSolved}")
+                this.crime = crime
+                updateUI()
+            } else {
+                Log.d(TAG, "ПРЕСТУПЛЕНИЕ НЕ ЗАГРУЖЕНО")
             }
-        )
+        }
+
+//        crimeDetailViewModel.crimeLiveData.observe(
+//            viewLifecycleOwner,
+//            Observer { crime ->
+//
+//                if (crime != null){
+//                    Log.d(TAG, "ПРЕСТУПЛЕНИЕ ЗАГРУЖЕНО: $crime")
+//                    this.crime = crime
+//                    updateUI()
+//                } else {
+//                    Log.d(TAG, "ПРЕСТУПЛЕНИЕ НЕ ЗАГРУЖЕНО")
+//                }
+////                crime?.let {
+////                    this.crime = crime
+////                    Log.d(TAG, "ПРЕСТУПЛЕНИЕ ЗАГРУЖЕНО: $crime")
+////                    updateUI()
+////                }
+//            }
+//        )
 
 
         //вот это норм
@@ -144,9 +160,11 @@ class CrimeFragment: Fragment() {
         fun newInstance(crimeId: UUID): CrimeFragment{
             val args = Bundle().apply {
                 putSerializable(ARG_CRIME_ID, crimeId)
+                //putString(ARG_CRIME_ID, crimeId.toString()) // преобразуем в строку
             }
             return CrimeFragment().apply {
                 arguments = args
+                Log.d(TAG, "ARRRRRG $args")
             }
         }
     }

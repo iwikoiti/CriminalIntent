@@ -53,7 +53,7 @@ class CrimeListFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crime_list,container,false)
 
-        crimeRecyclerView = view.findViewById<RecyclerView>(R.id.crime_recycler_view)!!
+        crimeRecyclerView = view.findViewById(R.id.crime_recycler_view)!!
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
         //updateUI()
@@ -65,6 +65,9 @@ class CrimeListFragment: Fragment() {
         crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner, Observer {
             crimes ->
             crimes?.let {
+                it.forEach { crime ->
+                    Log.i(TAG, "Crime ID: ${crime.id}, Title: ${crime.title}, Date: ${crime.date}, Solved: ${crime.isSolved}")
+                }
                 Log.i(TAG, "Got crimes ${crimes.size}")
                 updateUI(crimes)
             }
@@ -117,6 +120,7 @@ class CrimeListFragment: Fragment() {
         override fun onClick(v: View) {
             //Toast.makeText(context,"${crime.title} pressed!", Toast.LENGTH_SHORT).show()
             callbacks?.onCrimeSelected(crime.id)
+            //Toast.makeText(context,"${crime.id} pressed!", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -25,7 +25,11 @@ class CrimeRepository private constructor(context: Context){
     //fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
     fun getCrime(id: UUID): LiveData<Crime?> {
         Log.d(TAG, "ПРЕСТУПЛЕНИЕ ВНУТРИ GET CRIME $id")
-       return crimeDao.getCrime(id)
+       return crimeDao.getCrime(id).also {
+           it.observeForever { crime ->
+               Log.d(TAG, "Получен объект Crime: $crime")
+           }
+       }
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.criminalintent
 
+import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
         //Log.d(TAG, "MainActivity.onCrimeSelected: $crimeId")
         //val fragment = CrimeFragment()
         val fragment = CrimeFragment.newInstance(crimeId)
+        Log.d(TAG, "МЕМЕМЕМЕМЕМЕМЕ $crimeId")
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
     }
 }

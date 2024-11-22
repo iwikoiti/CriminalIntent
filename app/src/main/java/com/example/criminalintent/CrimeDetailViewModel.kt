@@ -28,8 +28,8 @@ class CrimeDetailViewModel(): ViewModel() {
 //            crimeIdLiveData.value = crimeIdLiveData.value
 //        }
 
-//        crimeRepository.getCrime(crimeId).observeForever { crime ->
-//            Log.d(TAG, "Crime loaded: $crime")
+//        crimeRepository.getCrime(crimeId).observeForever {
+//            Log.d(TAG, "ЭЭЭЭЭЭЭЭЭЭЭЭЭЭЭ: $crimeId")
 //            crimeIdLiveData.value = crimeId
 //        }
 
