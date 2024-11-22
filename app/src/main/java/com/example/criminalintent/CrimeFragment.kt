@@ -78,7 +78,10 @@ class CrimeFragment: Fragment() {
 
     private fun updateUI() {
         titleField.setText(crime.title)
-        dateButton.text = crime.date.toString()
+
+        val formattedDate = formatDate(crime.date) //меняем формат даты в кнопке
+        dateButton.text = formattedDate
+
         solvedCheckBox.apply {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()
