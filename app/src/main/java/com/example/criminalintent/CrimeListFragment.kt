@@ -130,7 +130,8 @@ class CrimeListFragment: Fragment() {
 
     // Функция форматирования даты
     private fun formatDate(date: Date): String {
-        val formatString = "EEEE, MMM dd, yyyy HH:mm"
+        //val formatString = "EEEE, MMM dd, yyyy HH:mm"
+        val formatString = "EEEE, MMM dd, yyyy"
         val formattedDate = DateFormat.format(formatString, date)
         return formattedDate.toString()
     }
