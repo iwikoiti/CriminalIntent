@@ -120,7 +120,11 @@ class CrimeFragment: Fragment() {
             setOnCheckedChangeListener{_, isChecked ->
                 crime.isSolved = isChecked}
         }
+    }
 
+    override fun onStop() {
+        super.onStop()
+        crimeDetailViewModel.saveCrime(crime)
     }
 
     companion object {

@@ -23,4 +23,8 @@ class CrimeDetailViewModel: ViewModel() {
         //Log.d(TAG, "ПРЕСТУПЛЕНИЕ В CrimeDetailViewModel $crimeId")
     }
 
+    fun saveCrime(crime: Crime) {
+        crimeRepository.updateCrime(crime)
+    }
+
 }
