@@ -19,6 +19,7 @@ import java.util.UUID
 
 private const val ARG_CRIME_ID = "crime_id"
 private const val TAG = "CrimeFragment"
+private const val DIALOG_DATE = "DialogDate"
 
 class CrimeFragment: Fragment() {
     private lateinit var crime: Crime
@@ -50,12 +51,6 @@ class CrimeFragment: Fragment() {
         dateButton = view.findViewById<Button>(R.id.crime_date)!!
         solvedCheckBox = view.findViewById<CheckBox>(R.id.crime_solved)!!
 
-        dateButton.apply {
-            val formattedDate = formatDate(crime.date) //меняем формат даты в кнопке
-            //text = crime.date.toString()
-            text = formattedDate
-            isEnabled = false
-        }
         return view
     }
 
@@ -123,6 +118,13 @@ class CrimeFragment: Fragment() {
             setOnCheckedChangeListener{_, isChecked ->
                 crime.isSolved = isChecked}
         }
+
+        dateButton.setOnClickListener{
+            DatePickerFragment().apply {
+                show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+            }
+        }
+
     }
 
     override fun onStop() {
